@@ -250,6 +250,9 @@ paket-files/
 CodeCoverageData/
 CodeCoverageReport/
 
+# Supercharger: http://supercharger.tools/
+*.scgdat
+
 
 # =========================
 # Operating System Files
