@@ -275,9 +275,6 @@ paket-files/
 # CodeRush
 .cr/
 
-# WinMerge
-*.bak
-
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
@@ -298,5 +295,6 @@ __pycache__/
 ### VisualStudio Patch ###
 # By default, sensitive information, such as encrypted password
 # should be stored in the .pubxml.user file.
+
 
 # End of https://www.gitignore.io/api/visualstudio
