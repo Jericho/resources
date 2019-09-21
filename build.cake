@@ -5,7 +5,7 @@
 #tool nuget:?package=GitVersion.CommandLine&version=5.0.1
 #tool nuget:?package=GitReleaseManager&version=0.8.0
 #tool nuget:?package=OpenCover&version=4.7.922
-#tool nuget:?package=ReportGenerator&version=4.2.19
+#tool nuget:?package=ReportGenerator&version=4.2.20
 #tool nuget:?package=coveralls.io&version=1.4.2
 #tool nuget:?package=xunit.runner.console&version=2.4.1
 
