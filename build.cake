@@ -46,7 +46,7 @@ var codeCoverageDir = outputDir + "CodeCoverage/";
 var unitTestsProject = sourceFolder + libraryName + ".UnitTests/" + libraryName + ".UnitTests.csproj";
 
 var versionInfo = GitVersion(new GitVersionSettings() { OutputType = GitVersionOutput.Json });
-var milestone = string.Concat("v", versionInfo.MajorMinorPatch);
+var milestone = versionInfo.MajorMinorPatch;
 var cakeVersion = typeof(ICakeContext).Assembly.GetName().Version.ToString();
 var isLocalBuild = BuildSystem.IsLocalBuild;
 var isMainBranch = StringComparer.OrdinalIgnoreCase.Equals("master", BuildSystem.AppVeyor.Environment.Repository.Branch);
