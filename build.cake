@@ -3,7 +3,7 @@
 
 // Install tools.
 #tool nuget:?package=GitVersion.CommandLine&version=5.1.2
-#tool nuget:?package=GitReleaseManager&version=0.8.0
+#tool nuget:?package=GitReleaseManager&version=0.9.0
 #tool nuget:?package=OpenCover&version=4.7.922
 #tool nuget:?package=ReportGenerator&version=4.3.6
 #tool nuget:?package=coveralls.io&version=1.4.2
