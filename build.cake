@@ -1,13 +1,19 @@
-// Install addins.
-#addin nuget:?package=Cake.Coveralls&version=0.10.1
+// Install modules
+#module nuget:?package=Cake.DotNetTool.Module&version=0.4.0
+
+// Install .NET tools
+#tool dotnet:?package=BenchmarkDotNet.Tool&version=0.12.0
 
 // Install tools.
-#tool nuget:?package=GitVersion.CommandLine&version=5.1.2
+#tool nuget:?package=GitVersion.CommandLine&version=5.1.3-beta1.29&prerelease
 #tool nuget:?package=GitReleaseManager&version=0.9.0
 #tool nuget:?package=OpenCover&version=4.7.922
 #tool nuget:?package=ReportGenerator&version=4.3.6
 #tool nuget:?package=coveralls.io&version=1.4.2
 #tool nuget:?package=xunit.runner.console&version=2.4.1
+
+// Install addins.
+#addin nuget:?package=Cake.Coveralls&version=0.10.1
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -41,10 +47,12 @@ var gitHubPassword = Argument<string>("GITHUB_PASSWORD", EnvironmentVariable("GI
 var gitHubRepoOwner = Argument<string>("GITHUB_REPOOWNER", EnvironmentVariable("GITHUB_REPOOWNER") ?? gitHubUserName);
 
 var sourceFolder = "./Source/";
-
 var outputDir = "./artifacts/";
 var codeCoverageDir = $"{outputDir}CodeCoverage/";
+var benchmarkDir = $"{outputDir}Benchmark/";
+
 var unitTestsProject = $"{sourceFolder}{libraryName}.UnitTests/{libraryName}.UnitTests.csproj";
+var benchmarkProject = $"{sourceFolder}{libraryName}.Benchmark/{libraryName}.Benchmark.csproj";
 
 var versionInfo = GitVersion(new GitVersionSettings() { OutputType = GitVersionOutput.Json });
 var milestone = versionInfo.MajorMinorPatch;
@@ -267,6 +275,10 @@ Task("Upload-AppVeyor-Artifacts")
 	{
 		AppVeyor.UploadArtifact(file.FullPath);
 	}
+	foreach (var file in GetFiles($"{benchmarkDir}results/*.*"))
+	{
+		AppVeyor.UploadArtifact(file.FullPath);
+	}
 });
 
 Task("Publish-NuGet")
@@ -364,6 +376,25 @@ Task("Publish-GitHub-Release")
 	}
 });
 
+Task("Generate-Benchmark-Report")
+	.IsDependentOn("Build")
+	.Does(() =>
+{
+    var publishDirectory = $"{benchmarkDir}Publish/";
+
+	DotNetCorePublish(benchmarkProject, new DotNetCorePublishSettings
+	{
+		Configuration = configuration,
+		NoRestore = true,
+        NoBuild = true,
+		OutputDirectory = publishDirectory
+	});
+
+    var assemblyLocation = MakeAbsolute(File($"{publishDirectory}{libraryName}.Benchmark.dll")).FullPath;
+    var artifactsLocation = MakeAbsolute(File(benchmarkDir)).FullPath;
+    DotNetCoreTool(benchmarkProject, "benchmark", $"{assemblyLocation} -f * --artifacts={artifactsLocation}");
+});
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // TARGETS
@@ -376,12 +407,21 @@ Task("Coverage")
 	StartProcess("cmd", $"/c start {codeCoverageDir}index.htm");
 });
 
+Task("Benchmark")
+	.IsDependentOn("Generate-Benchmark-Report")
+	.Does(() =>
+{
+    var htmlReport = GetFiles($"{benchmarkDir}results/*-report.html", new GlobberSettings { IsCaseSensitive = false }).FirstOrDefault();
+	StartProcess("cmd", $"/c start {htmlReport}");
+});
+
 Task("ReleaseNotes")
 	.IsDependentOn("Create-Release-Notes"); 
 
 Task("AppVeyor")
 	.IsDependentOn("Run-Code-Coverage")
 	.IsDependentOn("Upload-Coverage-Result")
+    .IsDependentOn("Generate-Benchmark-Report")
 	.IsDependentOn("Create-NuGet-Package")
 	.IsDependentOn("Upload-AppVeyor-Artifacts")
 	.IsDependentOn("Publish-MyGet")
