@@ -65,6 +65,7 @@ var isTagged = (
 	BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag &&
 	!string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name)
 );
+var isBenchmarkPresent = FileExists(benchmarkProject);
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -378,6 +379,7 @@ Task("Publish-GitHub-Release")
 
 Task("Generate-Benchmark-Report")
 	.IsDependentOn("Build")
+	.WithCriteria(isBenchmarkPresent)
 	.Does(() =>
 {
     var publishDirectory = $"{benchmarkDir}Publish/";
@@ -409,6 +411,7 @@ Task("Coverage")
 
 Task("Benchmark")
 	.IsDependentOn("Generate-Benchmark-Report")
+	.WithCriteria(isBenchmarkPresent)
 	.Does(() =>
 {
     var htmlReport = GetFiles($"{benchmarkDir}results/*-report.html", new GlobberSettings { IsCaseSensitive = false }).FirstOrDefault();
