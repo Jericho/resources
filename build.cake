@@ -43,15 +43,15 @@ var gitHubRepoOwner = Argument<string>("GITHUB_REPOOWNER", EnvironmentVariable("
 var sourceFolder = "./Source/";
 
 var outputDir = "./artifacts/";
-var codeCoverageDir = outputDir + "CodeCoverage/";
-var unitTestsProject = sourceFolder + libraryName + ".UnitTests/" + libraryName + ".UnitTests.csproj";
+var codeCoverageDir = $"{outputDir}CodeCoverage/";
+var unitTestsProject = $"{sourceFolder}{libraryName}.UnitTests/{libraryName}.UnitTests.csproj";
 
 var versionInfo = GitVersion(new GitVersionSettings() { OutputType = GitVersionOutput.Json });
 var milestone = versionInfo.MajorMinorPatch;
 var cakeVersion = typeof(ICakeContext).Assembly.GetName().Version.ToString();
 var isLocalBuild = BuildSystem.IsLocalBuild;
 var isMainBranch = StringComparer.OrdinalIgnoreCase.Equals("master", BuildSystem.AppVeyor.Environment.Repository.Branch);
-var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals(gitHubRepoOwner + "/" + gitHubRepo, BuildSystem.AppVeyor.Environment.Repository.Name);
+var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals($"{gitHubRepoOwner}/{gitHubRepo}", BuildSystem.AppVeyor.Environment.Repository.Name);
 var isPullRequest = BuildSystem.AppVeyor.Environment.PullRequest.IsPullRequest;
 var isTagged = (
 	BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag &&
@@ -100,7 +100,7 @@ Setup(context =>
 	if (!string.IsNullOrEmpty(gitHubToken))
 	{
 		Information("GitHub Info:\r\n\tRepo: {0}\r\n\tUserName: {1}\r\n\tToken: {2}",
-			gitHubRepoOwner + "/" + gitHubRepo,
+			$"{gitHubRepoOwner}/{gitHubRepo}",
 			gitHubUserName,
 			new string('*', gitHubToken.Length)
 		);
@@ -108,7 +108,7 @@ Setup(context =>
 	else
 	{
 		Information("GitHub Info:\r\n\tRepo: {0}\r\n\tUserName: {1}\r\n\tPassword: {2}",
-			gitHubRepoOwner + "/" + gitHubRepo,
+			$"{gitHubRepoOwner}/{gitHubRepo}",
 			gitHubUserName,
 			string.IsNullOrEmpty(gitHubPassword) ? "[NULL]" : new string('*', gitHubPassword.Length)
 		);
@@ -143,8 +143,8 @@ Task("Clean")
 {
 	// Clean solution directories.
 	Information("Cleaning {0}", sourceFolder);
-	CleanDirectories(sourceFolder + "*/bin/" + configuration);
-	CleanDirectories(sourceFolder + "*/obj/" + configuration);
+	CleanDirectories($"{sourceFolder}*/bin/{configuration}");
+	CleanDirectories($"{sourceFolder}*/obj/{configuration}");
 
 	// Clean previous artifacts
 	Information("Cleaning {0}", outputDir);
@@ -201,7 +201,7 @@ Task("Run-Code-Coverage")
 	});
 
 	OpenCover(testAction,
-		codeCoverageDir + "coverage.xml",
+		$"{codeCoverageDir}coverage.xml",
 		new OpenCoverSettings
 		{
 			OldStyle = true,
@@ -217,7 +217,7 @@ Task("Run-Code-Coverage")
 Task("Upload-Coverage-Result")
 	.Does(() =>
 {
-	CoverallsIo(codeCoverageDir + "coverage.xml");
+	CoverallsIo($"{codeCoverageDir}coverage.xml");
 });
 
 Task("Generate-Code-Coverage-Report")
@@ -225,7 +225,7 @@ Task("Generate-Code-Coverage-Report")
 	.Does(() =>
 {
 	ReportGenerator(
-		codeCoverageDir + "coverage.xml",
+		$"{codeCoverageDir}coverage.xml",
 		codeCoverageDir,
 		new ReportGeneratorSettings() {
 			ClassFilters = new[] { "*.UnitTests*" }
@@ -263,7 +263,7 @@ Task("Upload-AppVeyor-Artifacts")
 	.WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
 	.Does(() =>
 {
-	foreach (var file in GetFiles(outputDir + "*.*"))
+	foreach (var file in GetFiles($"{outputDir}*.*"))
 	{
 		AppVeyor.UploadArtifact(file.FullPath);
 	}
@@ -373,7 +373,7 @@ Task("Coverage")
 	.IsDependentOn("Generate-Code-Coverage-Report")
 	.Does(() =>
 {
-	StartProcess("cmd", "/c start " + codeCoverageDir + "index.htm");
+	StartProcess("cmd", $"/c start {codeCoverageDir}index.htm");
 });
 
 Task("ReleaseNotes")
