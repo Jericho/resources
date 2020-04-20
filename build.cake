@@ -1,4 +1,5 @@
-// Install modules
+// I
+nstall modules
 #module nuget:?package=Cake.DotNetTool.Module&version=0.4.0
 
 // Install .NET tools
@@ -8,7 +9,7 @@
 #tool nuget:?package=GitVersion.CommandLine&version=5.2.4
 #tool nuget:?package=GitReleaseManager&version=0.11.0
 #tool nuget:?package=OpenCover&version=4.7.922
-#tool nuget:?package=ReportGenerator&version=4.5.4
+#tool nuget:?package=ReportGenerator&version=4.5.6
 #tool nuget:?package=coveralls.io&version=1.4.2
 #tool nuget:?package=xunit.runner.console&version=2.4.1
 
