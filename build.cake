@@ -1,5 +1,4 @@
-// I
-nstall modules
+// Install modules
 #module nuget:?package=Cake.DotNetTool.Module&version=0.4.0
 
 // Install .NET tools
