@@ -1,4 +1,4 @@
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudio
+# Created with the help of https://www.toptal.com/developers/gitignore/api/visualstudio (formerly https://www.gitignore.io/api/visualstudio)
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio
 
 ### VisualStudio ###
@@ -313,7 +313,7 @@ paket-files/
 __pycache__/
 *.pyc
 
-# Cake - Uncomment if you are using it
+# Cake
 tools/**
 !tools/packages.config
 
@@ -355,5 +355,8 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# WinMerge
+*.bak
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
