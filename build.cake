@@ -242,6 +242,8 @@ Task("Create-NuGet-Package")
 	.IsDependentOn("Build")
 	.Does(() =>
 {
+	var releaseNotesUrl = @$"https://github.com/{gitHubRepoOwner}/{gitHubRepo}/releases/tag/{milestone}";
+
 	var settings = new DotNetCorePackSettings
 	{
 		Configuration = configuration,
@@ -255,6 +257,7 @@ Task("Create-NuGet-Package")
 		{
 			return args
 				.Append("/p:SymbolPackageFormat=snupkg")
+				.Append("/p:PackageReleaseNotes=\"{0}\"", releaseNotesUrl)
 				.Append("/p:Version={0}", versionInfo.LegacySemVerPadded)
 				.Append("/p:AssemblyVersion={0}", versionInfo.MajorMinorPatch)
 				.Append("/p:FileVersion={0}", versionInfo.MajorMinorPatch)
