@@ -319,7 +319,7 @@ __pycache__/
 
 # Cake
 tools/**
-!tools/packages.config
+BuildArtifacts/
 
 # Tabs Studio
 *.tss

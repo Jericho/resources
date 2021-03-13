@@ -52,7 +52,8 @@ var versionInfo = GitVersion(new GitVersionSettings() { OutputType = GitVersionO
 var milestone = versionInfo.MajorMinorPatch;
 var cakeVersion = typeof(ICakeContext).Assembly.GetName().Version.ToString();
 var isLocalBuild = BuildSystem.IsLocalBuild;
-var isMainBranch = StringComparer.OrdinalIgnoreCase.Equals("master", BuildSystem.AppVeyor.Environment.Repository.Branch);
+var isMainBranch = StringComparer.OrdinalIgnoreCase.Equals("main", BuildSystem.AppVeyor.Environment.Repository.Branch) ||
+				   StringComparer.OrdinalIgnoreCase.Equals("master", BuildSystem.AppVeyor.Environment.Repository.Branch);
 var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals($"{gitHubRepoOwner}/{gitHubRepo}", BuildSystem.AppVeyor.Environment.Repository.Name);
 var isPullRequest = BuildSystem.AppVeyor.Environment.PullRequest.IsPullRequest;
 var isTagged = (
@@ -230,7 +231,7 @@ Task("Generate-Code-Coverage-Report")
 	.Does(() =>
 {
 	ReportGenerator(
-		$"{codeCoverageDir}coverage.xml",
+		new FilePath($"{codeCoverageDir}coverage.xml"),
 		codeCoverageDir,
 		new ReportGeneratorSettings() {
 			ClassFilters = new[] { "*.UnitTests*" }
@@ -332,20 +333,15 @@ Task("Create-Release-Notes")
 		Name              = milestone,
 		Milestone         = milestone,
 		Prerelease        = false,
-		TargetCommitish   = "master"
+		TargetCommitish   = "main"
 	};
 
-	if (!string.IsNullOrEmpty(gitHubToken))
+	if (string.IsNullOrEmpty(gitHubToken))
 	{
-		GitReleaseManagerCreate(gitHubToken, gitHubRepoOwner, gitHubRepo, settings);
+		throw new InvalidOperationException("GitHub token was not provided.");
 	}
-	else
-	{
-		if(string.IsNullOrEmpty(gitHubUserName)) throw new InvalidOperationException("Could not resolve GitHub user name.");
-		if(string.IsNullOrEmpty(gitHubPassword)) throw new InvalidOperationException("Could not resolve GitHub password.");
 
-		GitReleaseManagerCreate(gitHubUserName, gitHubPassword, gitHubRepoOwner, gitHubRepo, settings);
-	}
+	GitReleaseManagerCreate(gitHubToken, gitHubRepoOwner, gitHubRepo, settings);
 });
 
 Task("Publish-GitHub-Release")
@@ -356,17 +352,12 @@ Task("Publish-GitHub-Release")
 	.WithCriteria(() => isTagged)
 	.Does(() =>
 {
-	if (!string.IsNullOrEmpty(gitHubToken))
+	if (string.IsNullOrEmpty(gitHubToken))
 	{
-		GitReleaseManagerClose(gitHubToken, gitHubRepoOwner, gitHubRepo, milestone);
+		throw new InvalidOperationException("GitHub token was not provided.");
 	}
-	else
-	{
-		if(string.IsNullOrEmpty(gitHubUserName)) throw new InvalidOperationException("Could not resolve GitHub user name.");
-		if(string.IsNullOrEmpty(gitHubPassword)) throw new InvalidOperationException("Could not resolve GitHub password.");
 
-		GitReleaseManagerClose(gitHubUserName, gitHubPassword, gitHubRepoOwner, gitHubRepo, milestone);
-	}
+	GitReleaseManagerClose(gitHubToken, gitHubRepoOwner, gitHubRepo, milestone);
 });
 
 Task("Generate-Benchmark-Report")
