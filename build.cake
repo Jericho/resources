@@ -1,5 +1,5 @@
 // Install tools.
-#tool nuget:?package=GitVersion.CommandLine&version=5.6.6
+#tool dotnet:?package=GitVersion.Tool&version=5.6.6
 #tool nuget:?package=GitReleaseManager&version=0.11.0
 #tool nuget:?package=OpenCover&version=4.7.922
 #tool nuget:?package=ReportGenerator&version=4.8.7
@@ -25,7 +25,7 @@ var configuration = Argument<string>("configuration", "Release");
 var libraryName = "%%PROJECT-NAME%%";
 var gitHubRepo = "%%PROJECT-NAME%%";
 
-var testCoverageFilter = "+[%%PROJECT-NAME%%]* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Properties.* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Models.* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Logging.*";
+var testCoverageFilter = "+[%%PROJECT-NAME%%]* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Properties.* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Models.*";
 var testCoverageExcludeByAttribute = "*.ExcludeFromCodeCoverage*";
 var testCoverageExcludeByFile = "*/*Designer.cs;*/*AssemblyInfo.cs";
 
