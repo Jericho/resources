@@ -190,7 +190,8 @@ Task("Run-Unit-Tests")
 	{
 		NoBuild = true,
 		NoRestore = true,
-		Configuration = configuration
+		Configuration = configuration,
+		Framework = IsRunningOnWindows() ? null : "netcoreapp3.1"
 	});
 });
 
@@ -220,6 +221,7 @@ Task("Run-Code-Coverage")
 });
 
 Task("Upload-Coverage-Result")
+	.IsDependentOn("Run-Code-Coverage")
 	.Does(() =>
 {
 	CoverallsIo($"{codeCoverageDir}coverage.xml");
