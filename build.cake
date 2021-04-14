@@ -7,7 +7,7 @@
 #tool nuget:?package=xunit.runner.console&version=2.4.1
 
 // Install addins.
-#addin nuget:?package=Cake.Coveralls&version=1.0.0
+#addin nuget:?package=Cake.Coveralls&version=1.0.1
 
 
 ///////////////////////////////////////////////////////////////////////////////
