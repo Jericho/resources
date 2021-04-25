@@ -24,10 +24,10 @@ if (IsRunningOnUnix()) target = "Run-Unit-Tests";
 // GLOBAL VARIABLES
 ///////////////////////////////////////////////////////////////////////////////
 
-var libraryName = "ZoomNet";
-var gitHubRepo = "ZoomNet";
+var libraryName = "%%PROJECT-NAME%%";
+var gitHubRepo = "%%PROJECT-NAME%%";
 
-var testCoverageFilter = "+[ZoomNet]* -[ZoomNet]ZoomNet.Properties.* -[ZoomNet]ZoomNet.Models.*";
+var testCoverageFilter = "+[%%PROJECT-NAME%%]* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Properties.* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Models.*";
 var testCoverageExcludeByAttribute = "*.ExcludeFromCodeCoverage*";
 var testCoverageExcludeByFile = "*/*Designer.cs;*/*AssemblyInfo.cs";
 
