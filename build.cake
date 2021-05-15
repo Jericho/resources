@@ -126,7 +126,7 @@ Setup(context =>
 	// Integration tests are intended to be used for debugging purposes and not intended to be executed in CI environment.
 	// Also, the runner for these tests contains windows-specific code (such as resizing window, moving window to center of screen, etc.)
 	// which can cause problems when attempting to run unit tests on an Ubuntu image on AppVeyor.
-	if (IsRunningOnUnix())
+	if (!isLocalBuild)
 	{
 		Information("");
 		Information("Removing integration tests");
@@ -136,7 +136,7 @@ Setup(context =>
 
 Teardown(context =>
 {
-	if (IsRunningOnUnix())
+	if (!isLocalBuild)
 	{
 		Information("Restoring integration tests");
 		GitCheckout(".", new FilePath[] { solutionFile });
