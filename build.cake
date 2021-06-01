@@ -223,11 +223,17 @@ Task("Run-Code-Coverage")
 	.IsDependentOn("Build")
 	.Does(() =>
 {
+	// For the purpose of calculating code coverage, a single target will suffice.
+	// FYI, this will cause an error if the unit test project is not configured
+	// to target this desired framework:
+	var desiredFramework = "net5.0";
+
 	Action<ICakeContext> testAction = ctx => ctx.DotNetCoreTest(unitTestsProject, new DotNetCoreTestSettings
 	{
 		NoBuild = true,
 		NoRestore = true,
-		Configuration = configuration
+		Configuration = configuration,
+		Framework = desiredFramework
 	});
 
 	OpenCover(testAction,
