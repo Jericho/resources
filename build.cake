@@ -1,13 +1,13 @@
 // Install tools.
 #tool dotnet:?package=GitVersion.Tool&version=5.6.6
 #tool nuget:?package=GitReleaseManager&version=0.11.0
-#tool nuget:?package=OpenCover&version=4.7.1204
-#tool nuget:?package=ReportGenerator&version=4.8.9
+#tool nuget:?package=OpenCover&version=4.7.1221
+#tool nuget:?package=ReportGenerator&version=4.8.11
 #tool nuget:?package=coveralls.io&version=1.4.2
 #tool nuget:?package=xunit.runner.console&version=2.4.1
 
 // Install addins.
-#addin nuget:?package=Cake.Coveralls&version=1.0.1
+#addin nuget:?package=Cake.Coveralls&version=1.1.0
 #addin nuget:?package=Cake.Git&version=1.0.1
 
 
