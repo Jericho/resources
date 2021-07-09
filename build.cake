@@ -440,8 +440,11 @@ Task("Benchmark")
 	.WithCriteria(isBenchmarkPresent)
 	.Does(() =>
 {
-    var htmlReport = GetFiles($"{benchmarkDir}results/*-report.html", new GlobberSettings { IsCaseSensitive = false }).FirstOrDefault();
-	StartProcess("cmd", $"/c start {htmlReport}");
+    var htmlReports = GetFiles($"{benchmarkDir}results/*-report.html", new GlobberSettings { IsCaseSensitive = false });
+	foreach (var htmlReport in htmlReports)
+	{
+		StartProcess("cmd", $"/c start {htmlReport}");
+	}
 });
 
 Task("ReleaseNotes")
@@ -456,9 +459,6 @@ Task("AppVeyor")
 	.IsDependentOn("Publish-MyGet")
 	.IsDependentOn("Publish-NuGet")
 	.IsDependentOn("Publish-GitHub-Release");
-
-Task("AppVeyor-Ubuntu")
-	.IsDependentOn("Run-Unit-Tests");
 
 Task("Default")
 	.IsDependentOn("Run-Unit-Tests")
