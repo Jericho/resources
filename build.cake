@@ -285,10 +285,10 @@ Task("Create-NuGet-Package")
 		NoRestore = true,
 		NoDependencies = true,
 		OutputDirectory = outputDir,
+		SymbolPackageFormat = "snupkg",
 		ArgumentCustomization = (args) =>
 		{
 			return args
-				.Append("/p:SymbolPackageFormat=snupkg")
 				.Append("/p:PackageReleaseNotes=\"{0}\"", releaseNotesUrl)
 				.Append("/p:Version={0}", versionInfo.LegacySemVerPadded)
 				.Append("/p:AssemblyVersion={0}", versionInfo.MajorMinorPatch)
