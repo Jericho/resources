@@ -201,10 +201,13 @@ Task("Build")
 	{
 		Configuration = configuration,
 		NoRestore = true,
-		ArgumentCustomization = args => args.Append("/p:SemVer=" + versionInfo.LegacySemVerPadded),
-		Framework =  IsRunningOnWindows() ? null : "net5.0",
-		MSBuildSettings = new DotNetCoreMSBuildSettings()
-    		.WithProperty("ContinuousIntegrationBuild", !BuildSystem.IsLocalBuild ? "false" : "true")
+		ArgumentCustomization = args =>
+		{
+			return args
+				.Append("/p:SemVer={0}", versionInfo.LegacySemVerPadded)
+				.Append("/p:ContinuousIntegrationBuild={0}", BuildSystem.IsLocalBuild ? "false" : "true")
+		},
+		Framework =  IsRunningOnWindows() ? null : "net5.0"
 	});
 });
 
