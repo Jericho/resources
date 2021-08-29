@@ -205,7 +205,7 @@ Task("Build")
 		{
 			return args
 				.Append("/p:SemVer={0}", versionInfo.LegacySemVerPadded)
-				.Append("/p:ContinuousIntegrationBuild={0}", BuildSystem.IsLocalBuild ? "false" : "true")
+				.Append("/p:ContinuousIntegrationBuild={0}", BuildSystem.IsLocalBuild ? "false" : "true");
 		},
 		Framework =  IsRunningOnWindows() ? null : "net5.0"
 	});
