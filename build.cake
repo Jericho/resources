@@ -205,7 +205,7 @@ Task("Build")
 		Framework =  IsRunningOnWindows() ? null : "net5.0",
 		MSBuildSettings = new DotNetCoreMSBuildSettings()
     		.WithProperty("ContinuousIntegrationBuild", BuildSystem.IsLocalBuild ? "false" : "true")
-	};
+	});
 });
 
 Task("Run-Unit-Tests")
