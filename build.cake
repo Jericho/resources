@@ -204,7 +204,7 @@ Task("Build")
 		ArgumentCustomization = args => args.Append("/p:SemVer=" + versionInfo.LegacySemVerPadded),
 		Framework =  IsRunningOnWindows() ? null : "net5.0",
 		MSBuildSettings = new DotNetCoreMSBuildSettings()
-    		.WithProperty("ContinuousIntegrationBuild", BuildSystem.IsLocalBuild ? "false" : "true")
+    		.WithProperty("ContinuousIntegrationBuild", !BuildSystem.IsLocalBuild ? "false" : "true")
 	});
 });
 
