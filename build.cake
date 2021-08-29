@@ -202,8 +202,10 @@ Task("Build")
 		Configuration = configuration,
 		NoRestore = true,
 		ArgumentCustomization = args => args.Append("/p:SemVer=" + versionInfo.LegacySemVerPadded),
-		Framework =  IsRunningOnWindows() ? null : "net5.0"
-	});
+		Framework =  IsRunningOnWindows() ? null : "net5.0",
+		MSBuildSettings = new DotNetCoreMSBuildSettings()
+    		.WithProperty("ContinuousIntegrationBuild", BuildSystem.IsLocalBuild ? "false" : "true")
+	}
 });
 
 Task("Run-Unit-Tests")
