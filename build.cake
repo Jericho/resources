@@ -202,7 +202,7 @@ Task("Build")
 		Configuration = configuration,
 		Framework =  IsRunningOnWindows() ? null : "net5.0",
 		NoRestore = true,
-		MSBuildSettings = new DotNetCoreMSBuildSettings().WithProperty("ContinuousIntegrationBuild", BuildSystem.IsLocalBuild ? "false" : "true")
+		MSBuildSettings = new DotNetCoreMSBuildSettings().WithProperty("ContinuousIntegrationBuild", BuildSystem.IsLocalBuild ? "false" : "true"),
 		ArgumentCustomization = args =>
 		{
 			return args
