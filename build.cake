@@ -138,7 +138,7 @@ Setup(context =>
 	{
 		Information("");
 		Information("Removing integration tests");
-		DotNetCoreTool(solutionFile, "sln", $"remove {integrationTestsProject.TrimStart(sourceFolder, StringComparison.OrdinalIgnoreCase)}");
+		DotNetTool(solutionFile, "sln", $"remove {integrationTestsProject.TrimStart(sourceFolder, StringComparison.OrdinalIgnoreCase)}");
 	}
 });
 
@@ -193,7 +193,7 @@ Task("Restore-NuGet-Packages")
 	.IsDependentOn("Clean")
 	.Does(() =>
 {
-	DotNetCoreRestore("./Source/", new DotNetCoreRestoreSettings
+	DotNetRestore("./Source/", new DotNetRestoreSettings
 	{
 		Sources = new [] {
 			"https://api.nuget.org/v3/index.json",
@@ -205,12 +205,12 @@ Task("Build")
 	.IsDependentOn("Restore-NuGet-Packages")
 	.Does(() =>
 {
-	DotNetCoreBuild(solutionFile, new DotNetCoreBuildSettings
+	DotNetBuild(solutionFile, new DotNetBuildSettings
 	{
 		Configuration = configuration,
 		Framework =  desiredFramework,
 		NoRestore = true,
-		MSBuildSettings = new DotNetCoreMSBuildSettings
+		MSBuildSettings = new DotNetMSBuildSettings
 		{
 			Version = versionInfo.LegacySemVerPadded,
 			AssemblyVersion = versionInfo.MajorMinorPatch,
@@ -225,7 +225,7 @@ Task("Run-Unit-Tests")
 	.IsDependentOn("Build")
 	.Does(() =>
 {
-	DotNetCoreTest(unitTestsProject, new DotNetCoreTestSettings
+	DotNetTest(unitTestsProject, new DotNetTestSettings
 	{
 		NoBuild = true,
 		NoRestore = true,
@@ -238,7 +238,7 @@ Task("Run-Code-Coverage")
 	.IsDependentOn("Build")
 	.Does(() =>
 {
-	Action<ICakeContext> testAction = ctx => ctx.DotNetCoreTest(unitTestsProject, new DotNetCoreTestSettings
+	Action<ICakeContext> testAction = ctx => ctx.DotNetTest(unitTestsProject, new DotNetTestSettings
 	{
 		NoBuild = true,
 		NoRestore = true,
@@ -293,7 +293,7 @@ Task("Create-NuGet-Package")
 {
 	var releaseNotesUrl = @$"https://github.com/{gitHubRepoOwner}/{gitHubRepo}/releases/tag/{milestone}";
 
-	var settings = new DotNetCorePackSettings
+	var settings = new DotNetPackSettings
 	{
 		Configuration = configuration,
 		IncludeSource = false,
@@ -303,14 +303,14 @@ Task("Create-NuGet-Package")
 		NoDependencies = true,
 		OutputDirectory = outputDir,
 		SymbolPackageFormat = "snupkg",
-		MSBuildSettings = new DotNetCoreMSBuildSettings
+		MSBuildSettings = new DotNetMSBuildSettings
 		{
 			PackageReleaseNotes = releaseNotesUrl,
 			PackageVersion = versionInfo.LegacySemVerPadded
 		}
 	};
 
-	DotNetCorePack(sourceProject, settings);
+	DotNetPack(sourceProject, settings);
 });
 
 Task("Upload-AppVeyor-Artifacts")
@@ -413,7 +413,7 @@ Task("Generate-Benchmark-Report")
     var publishedAppLocation = MakeAbsolute(File($"{publishDirectory}{libraryName}.Benchmark.exe")).FullPath;
     var artifactsLocation = MakeAbsolute(File(benchmarkDir)).FullPath;
 
-    DotNetCorePublish(benchmarkProject, new DotNetCorePublishSettings
+    DotNetPublish(benchmarkProject, new DotNetPublishSettings
     {
         Configuration = configuration,
 		NoRestore = true,
