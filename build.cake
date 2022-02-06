@@ -61,11 +61,10 @@ var isLocalBuild = BuildSystem.IsLocalBuild;
 var isMainBranch = StringComparer.OrdinalIgnoreCase.Equals("main", BuildSystem.AppVeyor.Environment.Repository.Branch);
 var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals($"{gitHubRepoOwner}/{gitHubRepo}", BuildSystem.AppVeyor.Environment.Repository.Name);
 var isPullRequest = BuildSystem.AppVeyor.Environment.PullRequest.IsPullRequest;
-var isTagged = (
-	BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag &&
-	!string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name)
-);
-var isBenchmarkPresent = FileExists(benchmarkProject);
+var isTagged = BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag && !string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name);
+var isIntegrationTestsProjectPresent = FileExists(integrationTestsProject);
+var isUnitTestsProjectPresent = FileExists(unitTestsProject);
+var isBenchmarkProjectPresent = FileExists(benchmarkProject);
 
 // Generally speaking, we want to honor all the TFM configured in the source project and the unit test project.
 // However, there are a few scenarios where a single framework is sufficient. Here are a few examples that come to mind:
@@ -134,11 +133,21 @@ Setup(context =>
 	// Integration tests are intended to be used for debugging purposes and not intended to be executed in CI environment.
 	// Also, the runner for these tests contains windows-specific code (such as resizing window, moving window to center of screen, etc.)
 	// which can cause problems when attempting to run unit tests on an Ubuntu image on AppVeyor.
-	if (!isLocalBuild)
+	if (!isLocalBuild && isIntegrationTestsProjectPresent)
 	{
 		Information("");
 		Information("Removing integration tests");
 		DotNetTool(solutionFile, "sln", $"remove {integrationTestsProject.TrimStart(sourceFolder, StringComparison.OrdinalIgnoreCase)}");
+	}
+
+	// Similarly, benchmarking can causes problems similar to this one:
+	// error NETSDK1005: Assets file '/home/appveyor/projects/stronggrid/Source/StrongGrid.Benchmark/obj/project.assets.json' doesn't have a target for 'net5.0'.
+	// Ensure that restore has run and that you have included 'net5.0' in the TargetFrameworks for your project.
+	if (!isLocalBuild && isBenchmarkProjectPresent)
+	{
+		Information("");
+		Information("Removing benchmark project");
+		DotNetTool(solutionFile, "sln", $"remove {benchmarkProject.TrimStart(sourceFolder, StringComparison.OrdinalIgnoreCase)}");
 	}
 });
 
@@ -146,7 +155,7 @@ Teardown(context =>
 {
 	if (!isLocalBuild)
 	{
-		Information("Restoring integration tests");
+		Information("Restoring projects that may have been removed during build script setup");
 		GitCheckout(".", new FilePath[] { solutionFile });
 		Information("");
 	}
@@ -406,7 +415,7 @@ Task("Publish-GitHub-Release")
 
 Task("Generate-Benchmark-Report")
 	.IsDependentOn("Build")
-	.WithCriteria(isBenchmarkPresent)
+	.WithCriteria(isBenchmarkProjectPresent)
 	.Does(() =>
 {
     var publishDirectory = $"{benchmarkDir}Publish/";
