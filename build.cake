@@ -459,7 +459,7 @@ Task("Coverage")
 
 Task("Benchmark")
 	.IsDependentOn("Generate-Benchmark-Report")
-	.WithCriteria(isBenchmarkPresent)
+	.WithCriteria(isBenchmarkProjectPresent)
 	.Does(() =>
 {
     var htmlReports = GetFiles($"{benchmarkDir}results/*-report.html", new GlobberSettings { IsCaseSensitive = false });
