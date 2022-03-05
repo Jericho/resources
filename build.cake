@@ -381,20 +381,19 @@ Task("Publish-MyGet")
 Task("Create-Release-Notes")
 	.Does(() =>
 {
-	var settings = new GitReleaseManagerCreateSettings
-	{
-		Name              = milestone,
-		Milestone         = milestone,
-		Prerelease        = false,
-		TargetCommitish   = "main"
-	};
-
 	if (string.IsNullOrEmpty(gitHubToken))
 	{
 		throw new InvalidOperationException("GitHub token was not provided.");
 	}
 
-	GitReleaseManagerCreate(gitHubToken, gitHubRepoOwner, gitHubRepo, settings);
+	GitReleaseManagerCreate(gitHubToken, gitHubRepoOwner, gitHubRepo, new GitReleaseManagerCreateSettings
+	{
+		Name            = milestone,
+		Milestone       = milestone,
+		Prerelease      = false,
+		TargetCommitish = "main",
+		Verbose         = true
+	});
 });
 
 Task("Publish-GitHub-Release")
@@ -410,7 +409,10 @@ Task("Publish-GitHub-Release")
 		throw new InvalidOperationException("GitHub token was not provided.");
 	}
 
-	GitReleaseManagerClose(gitHubToken, gitHubRepoOwner, gitHubRepo, milestone);
+	GitReleaseManagerClose(gitHubToken, gitHubRepoOwner, gitHubRepo, milestone, new GitReleaseManagerCloseMilestoneSettings
+	{
+		Verbose = true
+	});
 });
 
 Task("Generate-Benchmark-Report")
