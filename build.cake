@@ -280,9 +280,9 @@ Task("Run-Code-Coverage")
 		ArgumentCustomization = args => args.Append("-returntargetcode")
 	};
 	
-	testCoverageFilters.ForEach(filter => openCoverSettings.WithFilter(filter));
-	testCoverageExcludeAttributes.ForEach(attrib => openCoverSettings.ExcludeByAttribute(attrib));
-	testCoverageExcludeFiles.ForEach(file => openCoverSettings.ExcludeByFile(file));
+	Array.ForEach(testCoverageFilters, filter => openCoverSettings.WithFilter(filter));
+	Array.ForEach(testCoverageExcludeAttributes, attrib => openCoverSettings.ExcludeByAttribute(attrib));
+	Array.ForEach(testCoverageExcludeFiles, file => openCoverSettings.ExcludeByFile(file));
 
 	OpenCover(testAction, $"{codeCoverageDir}coverage.xml", openCoverSettings);
 });
