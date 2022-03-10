@@ -230,7 +230,7 @@ Task("Build")
 			AssemblyVersion = versionInfo.MajorMinorPatch,
 			FileVersion = versionInfo.MajorMinorPatch,
 			InformationalVersion = versionInfo.InformationalVersion,
-			ContinuousIntegrationBuild = !BuildSystem.IsLocalBuild
+			ContinuousIntegrationBuild = true
 		}
 	});
 });
