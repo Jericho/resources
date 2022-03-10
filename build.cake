@@ -28,8 +28,8 @@ if (IsRunningOnUnix()) target = "Run-Unit-Tests";
 var libraryName = "%%PROJECT-NAME%%";
 var gitHubRepo = "%%PROJECT-NAME%%";
 
-var testCoverageFilter = "+[%%PROJECT-NAME%%]* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Properties.* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Models.*";
-var testCoverageExcludeByAttribute = "*.ExcludeFromCodeCoverage*";
+var testCoverageFilter = "+[%%PROJECT-NAME%%]* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Properties.* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Models.* -[%%PROJECT-NAME%%]*System.Text.Json.SourceGeneration*";
+var testCoverageExcludeByAttribute = "*.ExcludeFromCodeCoverage*;*.GeneratedCode*";
 var testCoverageExcludeByFile = "*/*Designer.cs;*/*AssemblyInfo.cs";
 
 var nuGetApiUrl = Argument<string>("NUGET_API_URL", EnvironmentVariable("NUGET_API_URL"));
@@ -260,18 +260,18 @@ Task("Run-Code-Coverage")
 		Framework = desiredFramework
 	});
 
-	OpenCover(testAction,
-		$"{codeCoverageDir}coverage.xml",
-		new OpenCoverSettings
-		{
-			OldStyle = true,
-			MergeOutput = true,
-			ArgumentCustomization = args => args.Append("-returntargetcode")
-		}
-		.WithFilter(testCoverageFilter)
-		.ExcludeByAttribute(testCoverageExcludeByAttribute)
-		.ExcludeByFile(testCoverageExcludeByFile)
-	);
+	var openCoverSettings = new OpenCoverSettings
+	{
+		OldStyle = true,
+		MergeOutput = true,
+		ArgumentCustomization = args => args.Append("-returntargetcode")
+	};
+	
+	testCoverageFilter.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(filter => openCoverSettings.WithFilter(filter));
+	testCoverageExcludeByAttribute.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(attrib => openCoverSettings.ExcludeByAttribute(attrib));
+	testCoverageExcludeByFile.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(file => openCoverSettings.ExcludeByFile(file));
+
+	OpenCover(testAction, $"{codeCoverageDir}coverage.xml", openCoverSettings);
 });
 
 Task("Upload-Coverage-Result")
