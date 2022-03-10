@@ -280,7 +280,7 @@ Task("Run-Code-Coverage")
 		ArgumentCustomization = args => args.Append("-returntargetcode")
 	};
 	
-	testCoverageFilter.ForEach(filter => openCoverSettings.WithFilter(filter));
+	testCoverageFilters.ForEach(filter => openCoverSettings.WithFilter(filter));
 	testCoverageExcludeAttributes.ForEach(attrib => openCoverSettings.ExcludeByAttribute(attrib));
 	testCoverageExcludeFiles.ForEach(file => openCoverSettings.ExcludeByFile(file));
 
