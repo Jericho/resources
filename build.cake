@@ -72,7 +72,12 @@ var isBenchmarkProjectPresent = FileExists(benchmarkProject);
 // - when running unit tests on Ubuntu
 // - when calculating code coverage
 // FYI, this will cause an error if the source project and/or the unit test project are not configured to target this desired framework:
-var desiredFramework = IsRunningOnWindows() ? null : "net5.0";
+var desiredFramework = (
+		!IsRunningOnWindows() ||
+		target.Equals("Coverage", StringComparison.OrdinalIgnoreCase) ||
+		target.Equals("Coverage", StringComparison.OrdinalIgnoreCase) ||
+		target.Equals("Coverage", StringComparison.OrdinalIgnoreCase)
+	) ? "net6.0" : null;
 
 
 ///////////////////////////////////////////////////////////////////////////////
