@@ -88,8 +88,8 @@ var isBenchmarkProjectPresent = FileExists(benchmarkProject);
 var desiredFramework = (
 		!IsRunningOnWindows() ||
 		target.Equals("Coverage", StringComparison.OrdinalIgnoreCase) ||
-		target.Equals("Coverage", StringComparison.OrdinalIgnoreCase) ||
-		target.Equals("Coverage", StringComparison.OrdinalIgnoreCase)
+		target.Equals("Run-Code-Coverage", StringComparison.OrdinalIgnoreCase) ||
+		target.Equals("Generate-Code-Coverage-Report", StringComparison.OrdinalIgnoreCase)
 	) ? "net6.0" : null;
 
 
