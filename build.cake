@@ -1,7 +1,6 @@
 // Install tools.
 #tool dotnet:?package=GitVersion.Tool&version=5.9.0
 #tool nuget:?package=GitReleaseManager&version=0.13.0
-#tool nuget:?package=OpenCover&version=4.7.1221
 #tool nuget:?package=ReportGenerator&version=5.0.4
 #tool nuget:?package=coveralls.io&version=1.4.2
 #tool nuget:?package=xunit.runner.console&version=2.4.1
@@ -37,12 +36,13 @@ var testCoverageFilters = new[]
 };
 var testCoverageExcludeAttributes = new[]
 {
-	"*.ExcludeFromCodeCoverage*",
-	"*.GeneratedCode*"
+	"Obsolete",
+	"GeneratedCodeAttribute",
+	"CompilerGeneratedAttribute",
+	"ExcludeFromCodeCoverageAttribute"
 };
 var testCoverageExcludeFiles = new[] {
-	"*/*Designer.cs",
-	"*/*AssemblyInfo.cs"
+	"**/AssemblyInfo.cs"
 };
 
 var nuGetApiUrl = Argument<string>("NUGET_API_URL", EnvironmentVariable("NUGET_API_URL"));
@@ -265,26 +265,27 @@ Task("Run-Code-Coverage")
 	.IsDependentOn("Build")
 	.Does(() =>
 {
-	Action<ICakeContext> testAction = ctx => ctx.DotNetTest(unitTestsProject, new DotNetTestSettings
+	var testSettings = new DotNetTestSettings
 	{
 		NoBuild = true,
 		NoRestore = true,
 		Configuration = configuration,
-		Framework = desiredFramework
-	});
+		Framework = desiredFramework,
 
-	var openCoverSettings = new OpenCoverSettings
-	{
-		OldStyle = true,
-		MergeOutput = true,
-		ArgumentCustomization = args => args.Append("-returntargetcode")
-	};
-	
-	Array.ForEach(testCoverageFilters, filter => openCoverSettings.WithFilter(filter));
-	Array.ForEach(testCoverageExcludeAttributes, attrib => openCoverSettings.ExcludeByAttribute(attrib));
-	Array.ForEach(testCoverageExcludeFiles, file => openCoverSettings.ExcludeByFile(file));
+		// The following assumes that coverlet.msbuild has been added to the unit testing project
+		ArgumentCustomization = args => args
+			.Append("/p:CollectCoverage=true")
+			.Append("/p:CoverletOutputFormat=opencover")
+			.Append($"/p:CoverletOutput={MakeAbsolute(Directory(codeCoverageDir))}/coverage.xml")	// The name of the desired framework will be inserted between "coverage" and "xml". This is important to know when uploading the XML file to coveralls.io and when generating the HTML report
+			.Append($"/p:ExcludeByAttribute={string.Join("%2c", testCoverageExcludeAttributes)}")
+			.Append($"/p:ExcludeByFile={string.Join("%2c", testCoverageExcludeFiles)}")
+			.Append($"/p:Exclude={string.Join("%2c", testCoverageFilters.Where(filter => filter.StartsWith("-")).Select(filter => filter.TrimStart("-", StringComparison.OrdinalIgnoreCase)))}")
+			.Append($"/p:Include={string.Join("%2c", testCoverageFilters.Where(filter => filter.StartsWith("+")).Select(filter => filter.TrimStart("-", StringComparison.OrdinalIgnoreCase)))}")
+			.Append("/p:SkipAutoProps=true")
+			.Append("/p:UseSourceLink=true")
+    };
 
-	OpenCover(testAction, $"{codeCoverageDir}coverage.xml", openCoverSettings);
+    DotNetTest(unitTestsProject, testSettings);
 });
 
 Task("Upload-Coverage-Result")
@@ -293,7 +294,7 @@ Task("Upload-Coverage-Result")
 {
 	try
 	{
-		CoverallsIo($"{codeCoverageDir}coverage.xml");
+		CoverallsIo($"{codeCoverageDir}coverage.{desiredFramework}.xml");
 	}
 	catch (Exception e)
 	{
@@ -306,7 +307,7 @@ Task("Generate-Code-Coverage-Report")
 	.Does(() =>
 {
 	ReportGenerator(
-		new FilePath($"{codeCoverageDir}coverage.xml"),
+		new FilePath($"{codeCoverageDir}coverage.{desiredFramework}.xml"),
 		codeCoverageDir,
 		new ReportGeneratorSettings() {
 			ClassFilters = new[] { "*.UnitTests*" }
