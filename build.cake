@@ -28,9 +28,22 @@ if (IsRunningOnUnix()) target = "Run-Unit-Tests";
 var libraryName = "%%PROJECT-NAME%%";
 var gitHubRepo = "%%PROJECT-NAME%%";
 
-var testCoverageFilter = "+[%%PROJECT-NAME%%]* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Properties.* -[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Models.* -[%%PROJECT-NAME%%]*System.Text.Json.SourceGeneration*";
-var testCoverageExcludeByAttribute = "*.ExcludeFromCodeCoverage*;*.GeneratedCode*";
-var testCoverageExcludeByFile = "*/*Designer.cs;*/*AssemblyInfo.cs";
+var testCoverageFilters = new[]
+{
+	"+[%%PROJECT-NAME%%]*",
+	"-[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Properties.*",
+	"-[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Models.*",
+	"-[%%PROJECT-NAME%%]*System.Text.Json.SourceGeneration*"
+};
+var testCoverageExcludeAttributes = new[]
+{
+	"*.ExcludeFromCodeCoverage*",
+	"*.GeneratedCode*"
+};
+var testCoverageExcludeFiles = new[] {
+	"*/*Designer.cs",
+	"*/*AssemblyInfo.cs"
+};
 
 var nuGetApiUrl = Argument<string>("NUGET_API_URL", EnvironmentVariable("NUGET_API_URL"));
 var nuGetApiKey = Argument<string>("NUGET_API_KEY", EnvironmentVariable("NUGET_API_KEY"));
@@ -267,9 +280,9 @@ Task("Run-Code-Coverage")
 		ArgumentCustomization = args => args.Append("-returntargetcode")
 	};
 	
-	testCoverageFilter.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(filter => openCoverSettings.WithFilter(filter));
-	testCoverageExcludeByAttribute.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(attrib => openCoverSettings.ExcludeByAttribute(attrib));
-	testCoverageExcludeByFile.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(file => openCoverSettings.ExcludeByFile(file));
+	testCoverageFilter.ForEach(filter => openCoverSettings.WithFilter(filter));
+	testCoverageExcludeAttributes.ForEach(attrib => openCoverSettings.ExcludeByAttribute(attrib));
+	testCoverageExcludeFiles.ForEach(file => openCoverSettings.ExcludeByFile(file));
 
 	OpenCover(testAction, $"{codeCoverageDir}coverage.xml", openCoverSettings);
 });
