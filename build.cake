@@ -4,11 +4,12 @@
 #tool nuget:?package=GitReleaseManager&version=0.13.0
 #tool nuget:?package=ReportGenerator&version=5.1.0
 #tool nuget:?package=xunit.runner.console&version=2.4.1
+#tool nuget:?package=Codecov&version=1.13.0
 
 // Install addins.
 #addin nuget:?package=Cake.Coveralls&version=1.1.0
 #addin nuget:?package=Cake.Git&version=2.0.0
-
+#addin nuget:?package=Cake.Codecov&version=1.0.1
 
 ///////////////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -41,7 +42,8 @@ var testCoverageExcludeAttributes = new[]
 	"CompilerGeneratedAttribute",
 	"ExcludeFromCodeCoverageAttribute"
 };
-var testCoverageExcludeFiles = new[] {
+var testCoverageExcludeFiles = new[]
+ {
 	"**/AssemblyInfo.cs"
 };
 
@@ -55,6 +57,9 @@ var gitHubToken = Argument<string>("GITHUB_TOKEN", EnvironmentVariable("GITHUB_T
 var gitHubUserName = Argument<string>("GITHUB_USERNAME", EnvironmentVariable("GITHUB_USERNAME"));
 var gitHubPassword = Argument<string>("GITHUB_PASSWORD", EnvironmentVariable("GITHUB_PASSWORD"));
 var gitHubRepoOwner = Argument<string>("GITHUB_REPOOWNER", EnvironmentVariable("GITHUB_REPOOWNER") ?? gitHubUserName);
+
+var coverallsToken = Argument<string>("COVERALLS_REPO_TOKEN", EnvironmentVariable("COVERALLS_REPO_TOKEN"));
+var codecovToken = Argument<string>("CODECOV_TOKEN", EnvironmentVariable("CODECOV_TOKEN"));
 
 var sourceFolder = "./Source/";
 var outputDir = "./artifacts/";
@@ -293,9 +298,32 @@ Task("Upload-Coverage-Result")
 	.IsDependentOn("Run-Code-Coverage")
 	.Does(() =>
 {
+	// COVERALLS.IO
+	if (string.IsNullOrEmpty(coverallsToken))
+	{
+		Warning("COVERALLS_REPO_TOKEN not set. Skipping this task.");
+		return;
+	}
+
 	try
 	{
 		CoverallsNet(new FilePath($"{codeCoverageDir}coverage.{DefaultFramework}.xml"), CoverallsNetReportType.OpenCover);
+	}
+	catch (Exception e)
+	{
+		Warning(e.Message);
+	}
+
+	// CODECOV.IO
+	if (string.IsNullOrEmpty(codecovToken))
+	{
+		Warning("CODECOV_TOKEN not set. Skipping this task.");
+		return;
+	}
+
+	try
+	{
+		Codecov($"{codeCoverageDir}coverage.{DefaultFramework}.xml", codecovToken);
 	}
 	catch (Exception e)
 	{
