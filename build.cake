@@ -11,6 +11,7 @@
 #addin nuget:?package=Cake.Git&version=2.0.0
 #addin nuget:?package=Cake.Codecov&version=1.0.1
 
+
 ///////////////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 ///////////////////////////////////////////////////////////////////////////////
@@ -282,13 +283,12 @@ Task("Run-Code-Coverage")
 		ArgumentCustomization = args => args
 			.Append("/p:CollectCoverage=true")
 			.Append("/p:CoverletOutputFormat=opencover")
-			.Append($"/p:CoverletOutput={MakeAbsolute(Directory(codeCoverageDir))}/coverage.xml")	// The name of the framework will be inserted between "coverage" and "xml". This is important to know when uploading the XML file to coveralls.io and when generating the HTML report
+			.Append($"/p:CoverletOutput={MakeAbsolute(Directory(codeCoverageDir))}/coverage.xml")	// The name of the framework will be inserted between "coverage" and "xml". This is important to know when uploading the XML file to coveralls/codecov and when generating the HTML report
 			.Append($"/p:ExcludeByAttribute={string.Join("%2c", testCoverageExcludeAttributes)}")
 			.Append($"/p:ExcludeByFile={string.Join("%2c", testCoverageExcludeFiles)}")
 			.Append($"/p:Exclude={string.Join("%2c", testCoverageFilters.Where(filter => filter.StartsWith("-")).Select(filter => filter.TrimStart("-", StringComparison.OrdinalIgnoreCase)))}")
 			.Append($"/p:Include={string.Join("%2c", testCoverageFilters.Where(filter => filter.StartsWith("+")).Select(filter => filter.TrimStart("+", StringComparison.OrdinalIgnoreCase)))}")
 			.Append("/p:SkipAutoProps=true")
-			//.Append("/p:UseSourceLink=true") // Doesn't seem to work. After uploading to coveralls.io, I get "SOURCE NOT AVAILABLE".
     };
 
     DotNetTest(unitTestsProject, testSettings);
@@ -298,27 +298,16 @@ Task("Upload-Coverage-Result")
 	.IsDependentOn("Run-Code-Coverage")
 	.Does(() =>
 {
-	// COVERALLS.IO
-	if (string.IsNullOrEmpty(coverallsToken))
-	{
-		Warning("COVERALLS_REPO_TOKEN not set. Skipping this task.");
-		return;
-	}
-
 	try
 	{
-		CoverallsNet(new FilePath($"{codeCoverageDir}coverage.{DefaultFramework}.xml"), CoverallsNetReportType.OpenCover);
+		CoverallsNet(new FilePath($"{codeCoverageDir}coverage.{DefaultFramework}.xml"), CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
+		{
+			RepoToken = coverallsToken
+		});
 	}
 	catch (Exception e)
 	{
 		Warning(e.Message);
-	}
-
-	// CODECOV.IO
-	if (string.IsNullOrEmpty(codecovToken))
-	{
-		Warning("CODECOV_TOKEN not set. Skipping this task.");
-		return;
 	}
 
 	try
