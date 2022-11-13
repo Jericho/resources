@@ -297,21 +297,21 @@ Task("Run-Code-Coverage")
 
 Task("Upload-Coverage-Result-Coveralls")
 	.IsDependentOn("Run-Code-Coverage")
-	.ContinueOnError()
+	.OnError(exception =>  Information($"ONERROR: Failed to upload coverage result to Coveralls: {exception.Message}"))
 	.Does(() =>
 {
-	CoverallsNet(new FilePath($"{codeCoverageDir}coverage.{DefaultFramework}.xml"), CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
-	{
-		RepoToken = coverallsToken
-	});
+	//CoverallsNet(new FilePath($"{codeCoverageDir}coverage.{DefaultFramework}.xml"), CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
+	//{
+	//	RepoToken = coverallsToken
+	//});
 });
 
 Task("Upload-Coverage-Result-Codecov")
 	.IsDependentOn("Run-Code-Coverage")
-	.ContinueOnError()
+	.OnError(exception =>  Information($"ONERROR: Failed to upload coverage result to Codecov: {exception.Message}"))
 	.Does(() =>
 {
-	Codecov($"{codeCoverageDir}coverage.{DefaultFramework}.xml", codecovToken);
+	//Codecov($"{codeCoverageDir}coverage.{DefaultFramework}.xml", codecovToken);
 });
 
 Task("Generate-Code-Coverage-Report")
