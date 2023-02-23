@@ -257,6 +257,7 @@ Task("Build")
 });
 
 Task("Run-Unit-Tests")
+	.WithCriteria(() => isUnitTestsProjectPresent)
 	.IsDependentOn("Build")
 	.Does(() =>
 {
@@ -270,6 +271,7 @@ Task("Run-Unit-Tests")
 });
 
 Task("Run-Code-Coverage")
+	.WithCriteria(() => isUnitTestsProjectPresent)
 	.IsDependentOn("Build")
 	.Does(() =>
 {
