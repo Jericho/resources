@@ -13,6 +13,8 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.lutconfig
+launchSettings.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -86,6 +88,7 @@ StyleCopReport.xml
 *.pgc
 *.pgd
 *.rsp
+!Directory.Build.rsp
 *.sbr
 *.tlb
 *.tli
@@ -136,6 +139,9 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
+# JustCode is a .NET coding add-in
+.JustCode
+
 # TeamCity is a build add-in
 _TeamCity*
 
@@ -154,6 +160,7 @@ coverage*.info
 # Visual Studio code coverage results
 *.coverage
 *.coveragexml
+/coveragereport/
 
 # NCrunch
 _NCrunch_*
@@ -373,6 +380,9 @@ healthchecksdb
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
 
+# dotnet tool local install directory
+.store/
+
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
@@ -405,5 +415,8 @@ FodyWeavers.xsd
 
 # WinMerge
 *.bak
+
+# mac-created file to track user view preferences for a directory
+.DS_Store
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
