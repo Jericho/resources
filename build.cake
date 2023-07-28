@@ -422,7 +422,7 @@ Task("Publish-NuGet")
 
 Task("Publish-Feedzio")
 	.IsDependentOn("Create-NuGet-Package")
-    .WithCriteria(() => !isLocalBuild)
+	.WithCriteria(() => !isLocalBuild)
 	.WithCriteria(() => !isPullRequest)
 	.WithCriteria(() => isMainRepo)
 	.Does(() =>
@@ -557,7 +557,7 @@ Task("AppVeyor")
 
 Task("Default")
 	.IsDependentOn("Run-Unit-Tests")
-    .IsDependentOn("Create-NuGet-Package");
+	.IsDependentOn("Create-NuGet-Package");
 
 
 ///////////////////////////////////////////////////////////////////////////////
