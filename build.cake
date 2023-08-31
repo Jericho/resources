@@ -1,15 +1,15 @@
 // Install tools.
-#tool dotnet:?package=GitVersion.Tool&version=5.12.0
-#tool dotnet:?package=coveralls.net&version=4.0.1
-#tool nuget:?package=GitReleaseManager&version=0.15.0
-#tool nuget:?package=ReportGenerator&version=5.1.24
-#tool nuget:?package=xunit.runner.console&version=2.5.0
-#tool nuget:?package=CodecovUploader&version=0.5.0
+#toolpackage=GitVersion.Tool&version=5.12.0
+#toolpackage=coveralls.net&version=4.0.1
+#toolpackage=GitReleaseManager&version=0.15.0
+#toolpackage=ReportGenerator&version=5.1.24
+#toolpackage=xunit.runner.console&version=2.5.0
+#toolpackage=CodecovUploader&version=0.5.0
 
 // Install addins.
-#addin nuget:?package=Cake.Coveralls&version=1.1.0
-#addin nuget:?package=Cake.Git&version=3.0.0
-#addin nuget:?package=Cake.Codecov&version=1.0.1
+#addinpackage=Cake.Coveralls&version=1.1.0
+#addinpackage=Cake.Git&version=3.0.0
+#addinpackage=Cake.Codecov&version=1.0.1
 
 
 ///////////////////////////////////////////////////////////////////////////////
