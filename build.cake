@@ -308,6 +308,8 @@ Task("Upload-Coverage-Result-Coveralls")
 	.WithCriteria(() => isMainRepo)
 	.Does(() =>
 {
+	if(string.IsNullOrEmpty(coverallsToken)) throw new InvalidOperationException("Could not resolve Coveralls token.");
+
 	CoverallsNet(new FilePath(coverageFile), CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
 	{
 		RepoToken = coverallsToken,
@@ -328,6 +330,8 @@ Task("Upload-Coverage-Result-Codecov")
 	.WithCriteria(() => isMainRepo)
 	.Does(() =>
 {
+	if(string.IsNullOrEmpty(codecovToken)) throw new InvalidOperationException("Could not resolve CodeCov token.");
+
 	Codecov(new CodecovSettings
     {
         Files = new[] { coverageFile },
