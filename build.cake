@@ -8,7 +8,7 @@
 
 // Install addins.
 #addin nuget:?package=Cake.Coveralls&version=1.1.0
-#addin nuget:?package=Cake.Git&version=3.0.0
+#addin nuget:?package=Cake.Git&version=4.0.0
 #addin nuget:?package=Cake.Codecov&version=1.0.1
 
 
