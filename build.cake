@@ -97,7 +97,7 @@ var publishingError = false;
 // - when running unit tests on Ubuntu
 // - when calculating code coverage
 // FYI, this will cause an error if the source project and/or the unit test project are not configured to target this desired framework:
-const string DefaultFramework = "net7.0";
+const string DefaultFramework = "net9.0";
 var desiredFramework = (
 		!IsRunningOnWindows() ||
 		target.Equals("Coverage", StringComparison.OrdinalIgnoreCase) ||
