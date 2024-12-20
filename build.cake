@@ -265,7 +265,7 @@ Task("Build")
 	DotNetBuild(solutionFile, new DotNetBuildSettings
 	{
 		Configuration = configuration,
-		Framework =  isSingleTfmMode ? DEFAULT_FRAMEWORK : null;,
+		Framework =  isSingleTfmMode ? DEFAULT_FRAMEWORK : null,
 		NoRestore = true,
 		MSBuildSettings = new DotNetMSBuildSettings
 		{
@@ -288,7 +288,7 @@ Task("Run-Unit-Tests")
 		NoBuild = true,
 		NoRestore = true,
 		Configuration = configuration,
-		Framework = isSingleTfmMode ? DEFAULT_FRAMEWORK : null;
+		Framework = isSingleTfmMode ? DEFAULT_FRAMEWORK : null
 	});
 });
 
