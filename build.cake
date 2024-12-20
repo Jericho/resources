@@ -96,13 +96,12 @@ var publishingError = false;
 // - when building source project on Ubuntu
 // - when running unit tests on Ubuntu
 // - when calculating code coverage
-const string DefaultFramework = "net9.0";
+const string DEFAULT_FRAMEWORK = "net9.0";
 var isSingleTfmMode = !IsRunningOnWindows() ||
 		target.Equals("Coverage", StringComparison.OrdinalIgnoreCase) ||
 		target.Equals("Run-Code-Coverage", StringComparison.OrdinalIgnoreCase) ||
 		target.Equals("Generate-Code-Coverage-Report", StringComparison.OrdinalIgnoreCase) ||
 		target.Equals("Upload-Coverage-Result", StringComparison.OrdinalIgnoreCase);
-var desiredFramework = isSingleTfmMode ? DefaultFramework : null;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -186,8 +185,8 @@ Setup(context =>
 		foreach(var projectFile in GetFiles("./Source/**/*.csproj"))
 		{
 			Information("Updating TFM in: {0}", projectFile.ToString());
-			if (XmlPeek(projectFile, "/Project/PropertyGroup/TargetFramework", peekSettings) != null) XmlPoke(projectFile, "/Project/PropertyGroup/TargetFramework", desiredFramework);
-			if (XmlPeek(projectFile, "/Project/PropertyGroup/TargetFrameworks", peekSettings) != null) XmlPoke(projectFile, "/Project/PropertyGroup/TargetFrameworks", desiredFramework);
+			if (XmlPeek(projectFile, "/Project/PropertyGroup/TargetFramework", peekSettings) != null) XmlPoke(projectFile, "/Project/PropertyGroup/TargetFramework", DEFAULT_FRAMEWORK);
+			if (XmlPeek(projectFile, "/Project/PropertyGroup/TargetFrameworks", peekSettings) != null) XmlPoke(projectFile, "/Project/PropertyGroup/TargetFrameworks", DEFAULT_FRAMEWORK);
 		}
 	}
 });
@@ -270,7 +269,7 @@ Task("Build")
 	DotNetBuild(solutionFile, new DotNetBuildSettings
 	{
 		Configuration = configuration,
-		Framework =  desiredFramework,
+		Framework =  isSingleTfmMode ? DEFAULT_FRAMEWORK : null;,
 		NoRestore = true,
 		MSBuildSettings = new DotNetMSBuildSettings
 		{
@@ -293,7 +292,7 @@ Task("Run-Unit-Tests")
 		NoBuild = true,
 		NoRestore = true,
 		Configuration = configuration,
-		Framework = desiredFramework
+		Framework = isSingleTfmMode ? DEFAULT_FRAMEWORK : null;
 	});
 });
 
