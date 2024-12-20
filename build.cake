@@ -204,11 +204,7 @@ Teardown(context =>
 	if (isSingleTfmMode)
 	{
 		Information("Restoring project files that may have been modified during build script setup");
-		foreach(var projectFile in GetFiles("./Source/**/*.csproj"))
-		{
-			GitCheckout(".", new FilePath[] { projectFile });
-			Information("  Restored {0}", projectFile.ToString());
-		}
+		GitCheckout(".", GetFiles("./Source/**/*.csproj"));
 		Information("");
 	}
 
