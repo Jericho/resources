@@ -63,7 +63,7 @@ var sourceFolder = "./Source/";
 var outputDir = "./artifacts/";
 var codeCoverageDir = $"{outputDir}CodeCoverage/";
 var benchmarkDir = $"{outputDir}Benchmark/";
-var coverageFile = $"{codeCoverageDir}coverage.{DefaultFramework}.xml";
+var coverageFile = $"{codeCoverageDir}coverage.{DEFAULT_FRAMEWORK}.xml";
 
 var solutionFile = $"{sourceFolder}{libraryName}.sln";
 var sourceProject = $"{sourceFolder}{libraryName}/{libraryName}.csproj";
@@ -204,7 +204,7 @@ Teardown(context =>
 	if (isSingleTfmMode)
 	{
 		Information("Restoring project files that may have been modified during build script setup");
-		GitCheckout(".", GetFiles("./Source/**/*.csproj"));
+		GitCheckout(".", GetFiles("./Source/**/*.csproj").ToArray());
 		Information("");
 	}
 
