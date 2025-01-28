@@ -159,9 +159,9 @@ Setup(context =>
 	// In single TFM mode we want to override the framework(s) with our desired framework
 	if (isSingleTfmMode)
 	{
-		if (isUnitTestsProjectPresent) UpdateProjectTarget(unitTestsProject, DEFAULT_FRAMEWORK);
-		if (isBenchmarkProjectPresent) UpdateProjectTarget(benchmarkProject, DEFAULT_FRAMEWORK);
-		if (isIntegrationTestsProjectPresent) UpdateProjectTarget(integrationTestsProject, DEFAULT_FRAMEWORK);
+		if (isUnitTestsProjectPresent) Context.UpdateProjectTarget(unitTestsProject, DEFAULT_FRAMEWORK);
+		if (isBenchmarkProjectPresent) Context.UpdateProjectTarget(benchmarkProject, DEFAULT_FRAMEWORK);
+		if (isIntegrationTestsProjectPresent) Context.UpdateProjectTarget(integrationTestsProject, DEFAULT_FRAMEWORK);
 	}
 });
 
@@ -598,10 +598,10 @@ private static string GetRepoName(this ICakeContext context)
 	return $"{parts[parts.Length - 2]}/{parts[parts.Length - 1].Replace(".git", "")}";
 }
 
-private static string UpdateProjectTarget(string path, string desiredTarget)
+private static string UpdateProjectTarget(this ICakeContext context, string path, string desiredTarget)
 {
 	var peekSettings = new XmlPeekSettings { SuppressWarning = true };
-	foreach(var projectFile in GetFiles(path))
+	foreach(var projectFile in context.GetFiles(path))
 	{
 		Information("Updating TFM in: {0}", projectFile.ToString());
 		if (XmlPeek(projectFile, "/Project/PropertyGroup/TargetFramework", peekSettings) != null) XmlPoke(projectFile, "/Project/PropertyGroup/TargetFramework", desiredTarget);
