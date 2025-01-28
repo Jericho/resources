@@ -231,7 +231,6 @@ Task("Build")
 	DotNetBuild(solutionFile, new DotNetBuildSettings
 	{
 		Configuration = configuration,
-		Framework =  isSingleTfmMode ? DEFAULT_FRAMEWORK : null,
 		NoRestore = true,
 		MSBuildSettings = new DotNetMSBuildSettings
 		{
@@ -254,7 +253,6 @@ Task("Run-Unit-Tests")
 		NoBuild = true,
 		NoRestore = true,
 		Configuration = configuration,
-		Framework = isSingleTfmMode ? DEFAULT_FRAMEWORK : null
 	});
 });
 
@@ -268,7 +266,6 @@ Task("Run-Code-Coverage")
 		NoBuild = true,
 		NoRestore = true,
 		Configuration = configuration,
-		Framework = isSingleTfmMode ? DEFAULT_FRAMEWORK : null,
 
 		// The following assumes that coverlet.msbuild has been added to the unit testing project
 		ArgumentCustomization = args => args
