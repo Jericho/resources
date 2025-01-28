@@ -598,7 +598,7 @@ private static string GetRepoName(this ICakeContext context)
 	return $"{parts[parts.Length - 2]}/{parts[parts.Length - 1].Replace(".git", "")}";
 }
 
-private static string UpdateProjectTarget(this ICakeContext context, string path, string desiredTarget)
+private static void UpdateProjectTarget(this ICakeContext context, string path, string desiredTarget)
 {
 	var peekSettings = new XmlPeekSettings { SuppressWarning = true };
 	foreach(var projectFile in context.GetFiles(path))
