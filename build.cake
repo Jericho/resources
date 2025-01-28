@@ -90,12 +90,9 @@ var isBenchmarkProjectPresent = FileExists(benchmarkProject);
 var publishingError = false;
 
 // Generally speaking, we want to honor all the TFM configured in the unit tests, integration tests and benchmark projects.
-// However, there are a few scenarios where a single framework is sufficient. Here are a few examples that come to mind:
-// - when building source project on Ubuntu
-// - when running unit tests on Ubuntu
-// - when calculating code coverage
+// However, a single framework is sufficient when calculating code coverage.
 const string DEFAULT_FRAMEWORK = "net9.0";
-var isSingleTfmMode = !IsRunningOnWindows() ||
+var isSingleTfmMode = 
 		target.Equals("Coverage", StringComparison.OrdinalIgnoreCase) ||
 		target.Equals("Run-Code-Coverage", StringComparison.OrdinalIgnoreCase) ||
 		target.Equals("Generate-Code-Coverage-Report", StringComparison.OrdinalIgnoreCase) ||
