@@ -603,8 +603,8 @@ private static string UpdateProjectTarget(this ICakeContext context, string path
 	var peekSettings = new XmlPeekSettings { SuppressWarning = true };
 	foreach(var projectFile in context.GetFiles(path))
 	{
-		Information("Updating TFM in: {0}", projectFile.ToString());
-		if (XmlPeek(projectFile, "/Project/PropertyGroup/TargetFramework", peekSettings) != null) XmlPoke(projectFile, "/Project/PropertyGroup/TargetFramework", desiredTarget);
-		if (XmlPeek(projectFile, "/Project/PropertyGroup/TargetFrameworks", peekSettings) != null) XmlPoke(projectFile, "/Project/PropertyGroup/TargetFrameworks", desiredTarget);
+		context.Information("Updating TFM in: {0}", projectFile.ToString());
+		if (context.XmlPeek(projectFile, "/Project/PropertyGroup/TargetFramework", peekSettings) != null) context.XmlPoke(projectFile, "/Project/PropertyGroup/TargetFramework", desiredTarget);
+		if (context.XmlPeek(projectFile, "/Project/PropertyGroup/TargetFrameworks", peekSettings) != null) context.XmlPoke(projectFile, "/Project/PropertyGroup/TargetFrameworks", desiredTarget);
 	}
 }
