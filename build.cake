@@ -29,25 +29,6 @@ if (IsRunningOnUnix()) target = "Run-Unit-Tests";
 var libraryName = "%%PROJECT-NAME%%";
 var gitHubRepo = "%%PROJECT-NAME%%";
 
-var testCoverageFilters = new[]
-{
-	"+[%%PROJECT-NAME%%]*",
-	"-[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Properties.*",
-	"-[%%PROJECT-NAME%%]%%PROJECT-NAME%%.Models.*",
-	"-[%%PROJECT-NAME%%]*System.Text.Json.SourceGeneration*"
-};
-var testCoverageExcludeAttributes = new[]
-{
-	"Obsolete",
-	"GeneratedCodeAttribute",
-	"CompilerGeneratedAttribute",
-	"ExcludeFromCodeCoverageAttribute"
-};
-var testCoverageExcludeFiles = new[]
- {
-	"**/AssemblyInfo.cs"
-};
-
 var nuGetApiUrl = Argument<string>("NUGET_API_URL", EnvironmentVariable("NUGET_API_URL"));
 var nuGetApiKey = Argument<string>("NUGET_API_KEY", EnvironmentVariable("NUGET_API_KEY"));
 
@@ -97,7 +78,7 @@ const string DESIRED_FRAMEWORK_FOR_CODE_COVERAGE = "net9.0";
 // The terminal logger introduced but turned off by default in .NET8 and turned on by default in .NET9
 // doesn't work right on Linux and causes a lot of noise in the build log on Ubuntu in AppVeyor.
 // As of March 2025, the terminal logger doesn't seem to work right on Windows in AppVeyor either.
-// Therefore I am enabling it when building on my machine but turning it off in any other environment.
+// Therefore I am enabling it when building on my machine and turning it off in any other environment.
 var terminalLogger = (isLocalBuild && IsRunningOnWindows()) ? "on" : "off";
 
 
