@@ -24,7 +24,8 @@ if (IsRunningOnUnix()) target = "Run-Unit-Tests";
 // GLOBAL VARIABLES
 ///////////////////////////////////////////////////////////////////////////////
 
-var projectName = "%%PROJECT-NAME%%";
+var buildBranch = Context.GetBuildBranch();
+var repoName = Context.GetRepoName();
 
 var nuGetApiUrl = Argument<string>("NUGET_API_URL", EnvironmentVariable("NUGET_API_URL"));
 var nuGetApiKey = Argument<string>("NUGET_API_KEY", EnvironmentVariable("NUGET_API_KEY"));
@@ -42,14 +43,11 @@ var codeCoverageDir = $"{outputDir}CodeCoverage/";
 var benchmarkDir = $"{outputDir}Benchmark/";
 var coverageFile = $"{codeCoverageDir}coverage.xml";
 
-var solutionFile = $"{sourceFolder}{projectName}.sln";
-var sourceProject = $"{sourceFolder}{projectName}/{projectName}.csproj";
-var integrationTestsProject = $"{sourceFolder}{projectName}.IntegrationTests/{projectName}.IntegrationTests.csproj";
-var unitTestsProject = $"{sourceFolder}{projectName}.UnitTests/{projectName}.UnitTests.csproj";
-var benchmarkProject = $"{sourceFolder}{projectName}.Benchmark/{projectName}.Benchmark.csproj";
-
-var buildBranch = Context.GetBuildBranch();
-var repoName = Context.GetRepoName();
+var solutionFile = $"{sourceFolder}{repoName}.sln";
+var sourceProject = $"{sourceFolder}{repoName}/{repoName}.csproj";
+var integrationTestsProject = $"{sourceFolder}{repoName}.IntegrationTests/{repoName}.IntegrationTests.csproj";
+var unitTestsProject = $"{sourceFolder}{repoName}.UnitTests/{repoName}.UnitTests.csproj";
+var benchmarkProject = $"{sourceFolder}{repoName}.Benchmark/{repoName}.Benchmark.csproj";
 
 var versionInfo = (GitVersion)null; // Will be calculated in SETUP
 var milestone = string.Empty; // Will be calculated in SETUP
@@ -96,7 +94,7 @@ Setup(context =>
 
 	Information("Building version {0} of {1} ({2}, {3}) using version {4} of Cake",
 		versionInfo.FullSemVer,
-		projectName,
+		repoName,
 		configuration,
 		target,
 		cakeVersion
@@ -416,7 +414,7 @@ Task("Generate-Benchmark-Report")
 	.Does(() =>
 {
     var publishDirectory = $"{benchmarkDir}Publish/";
-    var publishedAppLocation = MakeAbsolute(File($"{publishDirectory}{projectName}.Benchmark.exe")).FullPath;
+    var publishedAppLocation = MakeAbsolute(File($"{publishDirectory}{repoName}.Benchmark.exe")).FullPath;
     var artifactsLocation = MakeAbsolute(File(benchmarkDir)).FullPath;
 
     DotNetPublish(benchmarkProject, new DotNetPublishSettings
