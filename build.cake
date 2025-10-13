@@ -57,7 +57,7 @@ var milestone = string.Empty; // Will be calculated in SETUP
 var cakeVersion = typeof(ICakeContext).Assembly.GetName().Version.ToString();
 var isLocalBuild = BuildSystem.IsLocalBuild;
 var isMainBranch = StringComparer.OrdinalIgnoreCase.Equals("main", buildBranch);
-var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals($"{gitHubRepoOwner}/{gitHubRepo}", repoName);
+var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals($"{gitHubRepoOwner}/{repoName}", repoName);
 var isPullRequest = BuildSystem.AppVeyor.Environment.PullRequest.IsPullRequest;
 var isTagged = BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag && !string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name);
 var isIntegrationTestsProjectPresent = FileExists(integrationTestsProject);
@@ -381,7 +381,7 @@ Task("Create-Release-Notes")
 		throw new InvalidOperationException("GitHub token was not provided.");
 	}
 
-	GitReleaseManagerCreate(gitHubToken, gitHubRepoOwner, gitHubRepo, new GitReleaseManagerCreateSettings
+	GitReleaseManagerCreate(gitHubToken, gitHubRepoOwner, repoName, new GitReleaseManagerCreateSettings
 	{
 		Name            = milestone,
 		Milestone       = milestone,
@@ -404,7 +404,7 @@ Task("Publish-GitHub-Release")
 		throw new InvalidOperationException("GitHub token was not provided.");
 	}
 
-	GitReleaseManagerClose(gitHubToken, gitHubRepoOwner, gitHubRepo, milestone, new GitReleaseManagerCloseMilestoneSettings
+	GitReleaseManagerClose(gitHubToken, gitHubRepoOwner, repoName, milestone, new GitReleaseManagerCloseMilestoneSettings
 	{
 		Verbose = true
 	});
