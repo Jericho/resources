@@ -24,8 +24,7 @@ if (IsRunningOnUnix()) target = "Run-Unit-Tests";
 // GLOBAL VARIABLES
 ///////////////////////////////////////////////////////////////////////////////
 
-var libraryName = "%%PROJECT-NAME%%";
-var gitHubRepo = "%%PROJECT-NAME%%";
+var projectName = "%%PROJECT-NAME%%";
 
 var nuGetApiUrl = Argument<string>("NUGET_API_URL", EnvironmentVariable("NUGET_API_URL"));
 var nuGetApiKey = Argument<string>("NUGET_API_KEY", EnvironmentVariable("NUGET_API_KEY"));
@@ -43,11 +42,11 @@ var codeCoverageDir = $"{outputDir}CodeCoverage/";
 var benchmarkDir = $"{outputDir}Benchmark/";
 var coverageFile = $"{codeCoverageDir}coverage.xml";
 
-var solutionFile = $"{sourceFolder}{libraryName}.sln";
-var sourceProject = $"{sourceFolder}{libraryName}/{libraryName}.csproj";
-var integrationTestsProject = $"{sourceFolder}{libraryName}.IntegrationTests/{libraryName}.IntegrationTests.csproj";
-var unitTestsProject = $"{sourceFolder}{libraryName}.UnitTests/{libraryName}.UnitTests.csproj";
-var benchmarkProject = $"{sourceFolder}{libraryName}.Benchmark/{libraryName}.Benchmark.csproj";
+var solutionFile = $"{sourceFolder}{projectName}.sln";
+var sourceProject = $"{sourceFolder}{projectName}/{projectName}.csproj";
+var integrationTestsProject = $"{sourceFolder}{projectName}.IntegrationTests/{projectName}.IntegrationTests.csproj";
+var unitTestsProject = $"{sourceFolder}{projectName}.UnitTests/{projectName}.UnitTests.csproj";
+var benchmarkProject = $"{sourceFolder}{projectName}.Benchmark/{projectName}.Benchmark.csproj";
 
 var buildBranch = Context.GetBuildBranch();
 var repoName = Context.GetRepoName();
@@ -97,7 +96,7 @@ Setup(context =>
 
 	Information("Building version {0} of {1} ({2}, {3}) using version {4} of Cake",
 		versionInfo.FullSemVer,
-		libraryName,
+		projectName,
 		configuration,
 		target,
 		cakeVersion
@@ -119,7 +118,7 @@ Setup(context =>
 	if (!string.IsNullOrEmpty(gitHubToken))
 	{
 		Information("GitHub Info:\r\n\tRepo: {0}\r\n\tUserName: {1}\r\n\tToken: {2}",
-			$"{gitHubRepoOwner}/{gitHubRepo}",
+			$"{gitHubRepoOwner}/{repoName}",
 			gitHubUserName,
 			new string('*', gitHubToken.Length)
 		);
@@ -127,7 +126,7 @@ Setup(context =>
 	else
 	{
 		Information("GitHub Info:\r\n\tRepo: {0}\r\n\tUserName: {1}\r\n\tPassword: {2}",
-			$"{gitHubRepoOwner}/{gitHubRepo}",
+			$"{gitHubRepoOwner}/{repoName}",
 			gitHubUserName,
 			string.IsNullOrEmpty(gitHubPassword) ? "[NULL]" : new string('*', gitHubPassword.Length)
 		);
@@ -312,7 +311,7 @@ Task("Create-NuGet-Package")
 	.IsDependentOn("Build")
 	.Does(() =>
 {
-	var releaseNotesUrl = @$"https://github.com/{gitHubRepoOwner}/{gitHubRepo}/releases/tag/{milestone}";
+	var releaseNotesUrl = @$"https://github.com/{gitHubRepoOwner}/{repoName}/releases/tag/{milestone}";
 
 	var settings = new DotNetPackSettings
 	{
@@ -417,7 +416,7 @@ Task("Generate-Benchmark-Report")
 	.Does(() =>
 {
     var publishDirectory = $"{benchmarkDir}Publish/";
-    var publishedAppLocation = MakeAbsolute(File($"{publishDirectory}{libraryName}.Benchmark.exe")).FullPath;
+    var publishedAppLocation = MakeAbsolute(File($"{publishDirectory}{projectName}.Benchmark.exe")).FullPath;
     var artifactsLocation = MakeAbsolute(File(benchmarkDir)).FullPath;
 
     DotNetPublish(benchmarkProject, new DotNetPublishSettings
