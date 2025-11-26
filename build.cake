@@ -428,7 +428,7 @@ Task("Generate-Benchmark-Report")
 			.Append($"-tl:{terminalLogger}")
     });
 
-	ExecuteCommand(publishedAppLocation, $"-f * --artifacts={artifactsLocation}");
+	Context.ExecuteCommand(publishedAppLocation, $"-f * --artifacts={artifactsLocation}");
 });
 
 
@@ -440,7 +440,7 @@ Task("Coverage")
 	.IsDependentOn("Generate-Code-Coverage-Report")
 	.Does(() =>
 {
-	ExecuteCommand("cmd", $"/c start {codeCoverageDir}index.htm");
+	Context.ExecuteCommand("cmd", $"/c start {codeCoverageDir}index.htm");
 });
 
 Task("Benchmark")
@@ -451,7 +451,7 @@ Task("Benchmark")
     var htmlReports = GetFiles($"{benchmarkDir}results/*-report.html", new GlobberSettings { IsCaseSensitive = false });
 	foreach (var htmlReport in htmlReports)
 	{
-		ExecuteCommand("cmd", $"/c start {htmlReport}");
+		Context.ExecuteCommand("cmd", $"/c start {htmlReport}");
 	}
 });
 
@@ -485,7 +485,6 @@ Task("Default")
 RunTarget(target);
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE METHODS
 ///////////////////////////////////////////////////////////////////////////////
@@ -510,8 +509,8 @@ static List<string> ExecuteCommand(this ICakeContext context, FilePath exe, stri
 {
 	using (DiagnosticVerbosity())
     {
-        var processResult = StartProcess(
-            publishedAppLocation,
+        var processResult = context.StartProcess(
+            exe,
             new ProcessSettings()
             {
                 Arguments = args,
