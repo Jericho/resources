@@ -528,7 +528,7 @@ static List<string> ExecuteCommand(this ICakeContext context, FilePath exe, stri
 			throw new Exception($"{exe} did not complete successfully. Result code: {processResult}", innerException);
 		}
 		
-	    return redirectedOutput.ToList();
+		return (redirectedOutput ?? Array.Empty<string>()).ToList();
     }
 }
 
