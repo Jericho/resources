@@ -507,7 +507,7 @@ static string TrimStart(this string source, string value, StringComparison compa
 
 static List<string> ExecuteCommand(this ICakeContext context, FilePath exe, string args, bool captureStandardOutput = false)
 {
-	using (DiagnosticVerbosity())
+	using (context.DiagnosticVerbosity())
     {
         var processResult = context.StartProcess(
             exe,
